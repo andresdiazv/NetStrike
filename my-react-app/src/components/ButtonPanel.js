@@ -4,10 +4,11 @@ import { Button, Container, Box, Dialog, DialogActions, DialogContent, DialogCon
 const ButtonPanel = () => {
   const [open, setOpen] = useState(false);
   const [ipAddress, setIpAddress] = useState('');
-  // Perform the scan with the ipAddress
-  console.log('Scanning IP:', ipAddress);
-  setOpen(false);
+  const [result, setResult] = useState(null); // You might need to add this if you want to store the scan result
+
   const handleScan = () => {
+    // Perform the scan with the ipAddress
+    console.log('Scanning IP:', ipAddress);
     fetch('/api/light-scan', {
       method: 'POST',
       headers: {
@@ -23,7 +24,9 @@ const ButtonPanel = () => {
         setResult(data.result);
       }
     });
+    setOpen(false);
   };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -31,7 +34,6 @@ const ButtonPanel = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
 
   return (
     <Container>
@@ -54,23 +56,23 @@ const ButtonPanel = () => {
       </Box>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Enter IP Address</DialogTitle>
+        <DialogTitle style={{ fontFamily: 'Minecraft' }}>Enter IP Address</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText style={{ fontFamily: 'Minecraft' }}>
             Please enter the IP address you want to scan.
           </DialogContentText>
-          <TextField
+          <TextField 
             autoFocus
             margin="dense"
             label="IP Address"
             type="text"
-            fullWidth
+            fullWidth 
             value={ipAddress}
             onChange={(e) => setIpAddress(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} style={{ fontFamily: 'Minecraft' }} color="primary">
             Cancel
           </Button>
           <Button 

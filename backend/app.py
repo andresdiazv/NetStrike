@@ -1,26 +1,21 @@
 import subprocess
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
-app = Flask(__name__)
-
+from flask_socketio import SocketIO
+import time
 
 app = Flask(__name__)
 CORS(app)
+socketio = SocketIO(app)
 
-
-
-
+# Fabian's routes
 @app.route('/msfdeploy', methods=['GET'])
 def msf_deploy():
     result = subprocess.check_output(["msfconsole"], universal_newlines=True)
     return jsonify({"command_output": result.strip()})
 
-
-
 @app.route('/api/light-scan', methods=['POST'])
 def light_scan():
-    # The command below just fetches the current directory
-    # Using subprocess to run command
     ip = request.json.get('ip', '').strip()
     if not ip.count('.') == 3 or not all(0 <= int(part) <= 255 for part in ip.split('.')):
         return jsonify({"error": "Invalid IP address"}), 400
@@ -30,6 +25,15 @@ def light_scan():
     
     return jsonify({"result": result})
 
+# Main's Socket.IO event
+@socketio.on('start_scan')
+def handle_start_scan(message):
+    ip_address = message['ip']
+    # Simulate a scan with progress updates
+    for progress in range(0, 101, 10):
+        scan_result = f"Scanning IP: {ip_address}, Progress: {progress}%"
+        socketio.emit('scan_update', {'update': scan_result, 'progress': progress})
+        time.sleep(1)  # Simulate time taken for scanning
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
