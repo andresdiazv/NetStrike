@@ -13,29 +13,27 @@ import {
   Checkbox,
 } from "@mui/material";
 import axios from 'axios';
-import './App.css';
-import Ansi from 'react-ansi';
+import '../App.css';
 import io from 'socket.io-client';
 
 function ConsoleOutput({ output }) {
   return (
     <div style={{
       fontFamily: 'monospace',
-      fontSize: '16px', // Increase font size
-      lineHeight: '1.5', // Adjust line spacing
+      fontSize: '16px', 
+      lineHeight: '1.5',
       backgroundColor: '#111',
       padding: '10px',
       color: '#FFF',
-      overflowY: 'auto', // Scroll vertically if content exceeds the height
-      maxHeight: '400px', // Set a maximum height
-      whiteSpace: 'pre-wrap' // Keep this to maintain line breaks and spaces
+      overflowY: 'auto', 
+      maxHeight: '400px',
+      whiteSpace: 'pre-wrap' 
     }}>
-      <Ansi>
-        {output}
-      </Ansi>
+      {output}
     </div>
   );
-};
+}
+
 const ButtonPanel = () => {
   const [open, setOpen] = useState(false);
   const [ipAddress, setIpAddress] = useState("");
@@ -53,7 +51,7 @@ const ButtonPanel = () => {
       console.log(data.update);
       setResult(prevResult => `${prevResult}\n${data.update}`);
     });
-  };
+    }, []);
 
   const handleCheckboxChange = (event) => {
     setSelectedScans({
@@ -69,6 +67,29 @@ const ButtonPanel = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleScan = () => {
+    if (isScanning) return;  // Prevent multiple scans at the same time
+  
+    setIsScanning(true);  // Set scanning status to true
+  
+    axios.post('http://localhost:5000/api/light-scan', {
+      ip: ipAddress,
+      selectedScans
+    })
+    .then(response => {
+      console.log('Scan Results:', response.data);
+      setResult(prevResult => `${prevResult}\nNmap: ${response.data.nmap}\nNuclei: ${response.data.nuclei}`);
+      setIsScanning(false);  // Set scanning status to false
+      handleClose();  // Close the dialog
+    })
+    .catch(error => {
+      console.error('Scan Error:', error);
+      setResult(prevResult => `${prevResult}\nError: ${error.message}`);
+      setIsScanning(false);  // Set scanning status to false
+    });
+  };
+  
 
   return (
     <Container>
@@ -146,12 +167,14 @@ const ButtonPanel = () => {
             Cancel
           </Button>
           <Button
-            onClick={handleScan}
-            color="primary"
-            style={{ fontFamily: "Minecraft" }}
-          >
-            Honk Scan
-          </Button>
+  onClick={handleScan}
+  color="primary"
+  style={{ fontFamily: "Minecraft" }}
+  disabled={isScanning} // Disable the button while scanning
+>
+  {isScanning ? 'Scanning...' : 'Start Scan'}
+</Button>
+
         </DialogActions>
       </Dialog>
 

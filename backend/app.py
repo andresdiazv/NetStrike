@@ -13,52 +13,45 @@ CORS(app)
 socketio = SocketIO(app)
 
 # Check if the required tools are installed
-
-
 def is_tool_installed(tool):
-    if os.name == 'posix':  # UNIX, Linux, macOS
+    if os.name == 'posix':
         return subprocess.run(['which', tool], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode == 0
-    elif os.name == 'nt':  # Windows
+    elif os.name == 'nt':
         return subprocess.run(['where', tool], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode == 0
 
-
-# Only proceed if nmap and nuclei are installed
 if not is_tool_installed('nmap') or not is_tool_installed('nuclei'):
     sys.exit("Error: nmap and nuclei must be installed to use this script.")
 
-
 def perform_nmap_scan(ip):
+    cmd = ['nmap', '-p', '80', ip]
     try:
-        result = subprocess.check_output(
-            ['nmap', '-oX', '-', ip], universal_newlines=True)
+        result = subprocess.check_output(cmd, universal_newlines=True)
+        return parse_nmap_result(result, ip)
     except subprocess.CalledProcessError as e:
-        print("Error:", e)
-        print("Output:", e.output)
-    return parse_nmap_result(result)
-    result = subprocess.check_output(
-        ['./nuclei', '-u', ip], universal_newlines=True)
-    return json.dumps({"result": result})
+        app.logger.error(f"Nmap scan failed with command: {' '.join(cmd)}")
+        app.logger.error(f"Return code: {e.returncode}")
+        app.logger.error(f"Output: {e.output}")
+        return json.dumps({"error": "Nmap scan failed"})
 
 
 def perform_nuclei_scan(ip):
+    cmd = ['./nuclei', '-u', ip]
     try:
-        result = subprocess.check_output(
-            ['./nuclei', '-u', ip], universal_newlines=True)
+        result = subprocess.check_output(cmd, universal_newlines=True)
         return json.dumps({"result": result})
     except subprocess.CalledProcessError as e:
-        app.logger.error("Nuclei scan failed: %s", e)
-        app.logger.error("Output: %s", e.output)
+        app.logger.error(f"Nuclei scan failed with command: {' '.join(cmd)}")
+        app.logger.error(f"Return code: {e.returncode}")
+        app.logger.error(f"Output: {e.output}")
         return json.dumps({"error": "Nuclei scan failed"})
 
-
-def parse_nmap_result(result):
+def parse_nmap_result(result, ip):
     tree = ET.fromstring(result)
     scan_summary = {
         "IP": ip,
         "OpenPorts": [port.attrib['portid'] for port in tree.findall(".//port[@state='open']")],
     }
     return json.dumps(scan_summary)
-
 
 @app.route('/api/light-scan', methods=['POST'])
 def light_scan():
@@ -79,7 +72,5 @@ def light_scan():
 
     return jsonify(response_data)
 
-
 if __name__ == '__main__':
     app.run(debug=True)
-
