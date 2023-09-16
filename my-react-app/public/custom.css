@@ -1,0 +1,6 @@
+/* public/custom.css */
+@font-face {
+    font-family: 'Minecraft';
+    src: url('/Minecraft.ttf') format('truetype');
+  }
+  
