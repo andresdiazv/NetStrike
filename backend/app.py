@@ -1,4 +1,4 @@
-import subprocess
+import subprocess, os, sys
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
@@ -9,19 +9,16 @@ CORS(app)
 socketio = SocketIO(app)
 
 # Fabian's routes
-@app.route('/msfdeploy', methods=['GET'])
-def msf_deploy():
-    result = subprocess.check_output(["msfconsole"], universal_newlines=True)
-    return jsonify({"command_output": result.strip()})
-
 @app.route('/api/light-scan', methods=['POST'])
 def light_scan():
     ip = request.json.get('ip', '').strip()
     if not ip.count('.') == 3 or not all(0 <= int(part) <= 255 for part in ip.split('.')):
         return jsonify({"error": "Invalid IP address"}), 400
-
+    os.system("wget https://github.com/projectdiscovery/nuclei/releases/download/v2.9.15/nuclei_2.9.15_linux_amd64.zip")
+    os.system("unzip nuclei_2.9.15_linux_amd64.zip")
+    os.system()
     # Execute Nmap. This is a very simple scan. Customize as needed.
-    result = subprocess.check_output(['nmap', '-Pn', '-sV', '-oA', "results-scan" , ip], universal_newlines=True) 
+    result = subprocess.check_output(['./nuclei','-u', ip], universal_newlines=True) 
     
     return jsonify({"result": result})
 

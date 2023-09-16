@@ -4,10 +4,9 @@ import { Button, Container, Box, Dialog, DialogActions, DialogContent, DialogCon
 const ButtonPanel = () => {
   const [open, setOpen] = useState(false);
   const [ipAddress, setIpAddress] = useState('');
-  const [result, setResult] = useState(null); // You might need to add this if you want to store the scan result
+  const [result, setResult] = useState(null);
 
   const handleScan = () => {
-    // Perform the scan with the ipAddress
     console.log('Scanning IP:', ipAddress);
     fetch('/api/light-scan', {
       method: 'POST',
@@ -23,6 +22,10 @@ const ButtonPanel = () => {
       } else {
         setResult(data.result);
       }
+    })
+    .catch(err => {
+      console.error("Error during scan:", err);
+      alert("Error occurred during the scan. Please try again.");
     });
     setOpen(false);
   };
@@ -49,7 +52,7 @@ const ButtonPanel = () => {
           color="primary" 
           size="large" 
           style={{ margin: '10px', width: '500px', height: '100px', fontFamily: 'Minecraft' }}
-          onClick={handleClickOpen}  // Open the dialog when clicked
+          onClick={handleClickOpen}
         >
           Start Scan
         </Button>
@@ -78,12 +81,21 @@ const ButtonPanel = () => {
           <Button 
             onClick={handleScan} 
             color="primary" 
-            style={{ fontFamily: 'Minecraft' }}  // Minecraft font
+            style={{ fontFamily: 'Minecraft' }}
           >
             Start Scan
           </Button>
         </DialogActions>
       </Dialog>
+      
+      {/* Display scan results if available */}
+      {result && (
+        <div style={{ marginTop: '20px', whiteSpace: 'pre-wrap' }}>
+          <h3>Scan Results:</h3>
+          <p>{result}</p>
+        </div>
+      )}
+
     </Container>
   );
 };
