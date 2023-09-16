@@ -40,23 +40,23 @@ const ButtonPanel = () => {
       </Box>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Enter IP Address</DialogTitle>
+        <DialogTitle style={{ fontFamily: 'Minecraft' }}>Enter IP Address</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText style={{ fontFamily: 'Minecraft' }}>
             Please enter the IP address you want to scan.
           </DialogContentText>
-          <TextField
+          <TextField 
             autoFocus
             margin="dense"
             label="IP Address"
             type="text"
-            fullWidth
+            fullWidth 
             value={ipAddress}
             onChange={(e) => setIpAddress(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleClose} style={{ fontFamily: 'Minecraft' }} color="primary">
             Cancel
           </Button>
           <Button 
