@@ -1,94 +1,92 @@
-# NetStrike :shield: :computer:
+# NetStrike 🚀
 
-## "Securing Networks, One Scan at a Time" :mag_right:
+Welcome to NetStrike, your all-in-one network scanning application! 🌐✨
 
----
+## Table of Contents
+- [Introduction](#introduction)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Disclaimer](#disclaimer)
+- [Legal Bounds](#legal-bounds)
+- [License](#license)
 
-### :rotating_light: The Problem
+## Introduction
 
-In today's interconnected world, network security is not just an option; it's a necessity. With the increasing number of cyber-attacks, organizations are in a constant battle to protect their network infrastructure. Traditional vulnerability assessment tools are often complicated, expensive, and require specialized knowledge to operate effectively. :lock: :warning:
+NetStrike is a powerful application designed to simplify network scanning tasks. It provides a single dashboard where you can initiate scans, input IP addresses, and perform both Nmap and Nuclei scans effortlessly. Whether you're a cybersecurity professional, a system administrator, or just curious about your network's security, NetStrike has got you covered! 🛡️💻
 
----
+## Features
 
-### :bulb: The Solution
+🌟 **Single Dashboard:** Enjoy the convenience of a unified dashboard for all your scanning needs.
 
-**NetStrike** is here to change the game. Our application provides an intuitive, user-friendly interface to assess vulnerabilities in your network, whether it's a single target or an entire range. With just a few clicks, you can gain valuable insights into the security posture of your network. :dart: :unlock:
+🔍 **Nmap Scan:** Perform comprehensive network scans using Nmap, and gather valuable information about your target systems.
 
----
+🕵️ **Nuclei Scan:** Detect vulnerabilities and security issues in web applications with Nuclei scans.
 
-### :rocket: Features
+💼 **ReactJS Frontend:** A sleek and user-friendly interface powered by ReactJS ensures a seamless user experience.
 
-- **Easy to Use**: A simple, intuitive UI built on React.js.
-- **Powerful Scanning**: Backed by a robust Python backend.
-- **Flexible**: Scan a single target or an entire network range.
-- **Real-time Updates**: Get live feedback during the scanning process.
-- **Detailed Reports**: Understand vulnerabilities with comprehensive reports.
-- **Secure**: Your data and scan results are encrypted and secure.
+🐍 **Python Flask Backend:** The backend, built on Python Flask, delivers fast and reliable scanning capabilities.
 
----
+## Getting Started
 
-### :gear: Tech Stack
+To get started with NetStrike, follow these simple steps:
 
-- **Frontend**: React.js with Material-UI for a sleek, modern UI.
-- **Backend**: Python for powerful, efficient vulnerability scanning.
-- **Database**: MongoDB for robust, flexible data storage.
-- **Deployment**: Hosted on Azure for scalability and reliability.
+1. Clone the repository to your local machine:
 
----
+   ```bash
+   git clone https://github.com/andresdiazv/NetStrike.git
+   ```
 
-### :hammer_and_wrench: Installation & Usage
+2. Navigate to the project directory:
 
-1. **Clone the Repository**
+   ```bash
+   cd NetStrike
+   ```
 
-    ```bash
-    git clone https://github.com/yourusername/NetStrike.git
-    ```
+3. Install the necessary dependencies for both the frontend and backend:
 
-2. **Navigate to Project Directory**
+   ```bash
+   cd my-react-app
+   npm install
+   ```
 
-    ```bash
-    cd NetStrike
-    ```
+   ```bash
+   cd ../backend
+   pip install -r requirements.txt
+   ```
 
-3. **Install Dependencies**
+4. Start the application:
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   # In the frontend directory
+   npm start
 
-4. **Start the Application**
+   # In the backend directory
+   python app.py
+   ```
 
-    ```bash
-    npm start
-    ```
+5. Open your web browser and access `http://localhost:3000` to begin using NetStrike! 🎉
 
----
+## Usage
 
-### :trophy: Awards & Recognition
+1. **Dashboard:** Access the dashboard and input the IP address you want to scan.
 
--
+2. **Nmap Scan:** Check the "Nmap" box to choose an Nmap scan then start scan. The results will be displayed on the screen.
 
----
+3. **Nuclei Scan:** Check the " Nuclei" box to choose a Nuclei scan on the provided IP address then start scan. The results will also be displayed for your analysis.
 
-### :handshake: Contributing
+4. **Explore:** Analyze the scan results and take necessary actions based on the findings.
 
-We welcome contributions from the community. Feel free to open an issue or create a pull request. For major changes, please open an issue first to discuss what you would like to change.
+## Disclaimer
 
----
+Please use NetStrike responsibly and ethically. Unauthorized scanning of networks and systems without proper authorization may violate the law and terms of service agreements.
 
-### :memo: License
+## Legal Bounds
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+NetStrike is intended for legitimate use, such as network security assessments, vulnerability detection, and system administration. Users are solely responsible for complying with all applicable laws and regulations. The creators and contributors of NetStrike are not responsible for any misuse or illegal activities performed using this software.
 
----
+## License
 
-### :phone: Get in Touch
+NetStrike is open-source software licensed under the [MIT License](LICENSE). Feel free to fork, modify, and share it with others!
 
-- :email: Email: adiaz616@fiu.edu
-- :globe_with_meridians: Website: [NetStrike](https://netstrike.example.com)
-
----
-
-:star: Happy Scanning with NetStrike! :star:
-
----
+Happy Scanning! 🌐🔒

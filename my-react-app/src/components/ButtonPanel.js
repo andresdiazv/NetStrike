@@ -53,33 +53,6 @@ const ButtonPanel = () => {
       console.log(data.update);
       setResult(prevResult => `${prevResult}\n${data.update}`);
     });
-
-    // Cleanup the listener when the component is unmounted
-    return () => {
-      socket.off('scan_update');
-    };
-  }, []);
-
-  const handleScan = async () => {
-    try {
-      setIsScanning(true);
-      let apiEndpoint;
-      if (selectedScans.nmap) {
-        apiEndpoint = "/api/nmap-scan";
-      } else if (selectedScans.nuclei) {
-        apiEndpoint = "/api/nuclei-scan";
-      }
-    
-      console.log('Scanning IP:', ipAddress);
-
-      const response = await axios.post(apiEndpoint, { ip: ipAddress });
-      setResult(response.data.result);  // Updated to use setResult instead of setOutput
-    } catch (error) {
-      console.error("Error during scan:", error);
-      setResult("An error occurred during the scan. Please try again."); // Same as above
-    } finally {
-      setIsScanning(false);
-    }
   };
 
   const handleCheckboxChange = (event) => {

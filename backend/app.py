@@ -1,61 +1,85 @@
-import subprocess, os, sys
+import subprocess
+import os
+import sys
+import json
 from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from xml.etree import ElementTree as ET
 import time
-import shutil
-
-def is_tool(name):
-    """Check whether `name` is on PATH and marked as executable."""
-    return shutil.which(name) is not None
 
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app)
 
-# Fabian's routes
+# Check if the required tools are installed
+
+
+def is_tool_installed(tool):
+    if os.name == 'posix':  # UNIX, Linux, macOS
+        return subprocess.run(['which', tool], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode == 0
+    elif os.name == 'nt':  # Windows
+        return subprocess.run(['where', tool], stdout=subprocess.PIPE, stderr=subprocess.PIPE).returncode == 0
+
+
+# Only proceed if nmap and nuclei are installed
+if not is_tool_installed('nmap') or not is_tool_installed('nuclei'):
+    sys.exit("Error: nmap and nuclei must be installed to use this script.")
+
+
+def perform_nmap_scan(ip):
+    try:
+        result = subprocess.check_output(
+            ['nmap', '-oX', '-', ip], universal_newlines=True)
+    except subprocess.CalledProcessError as e:
+        print("Error:", e)
+        print("Output:", e.output)
+    return parse_nmap_result(result)
+    result = subprocess.check_output(
+        ['./nuclei', '-u', ip], universal_newlines=True)
+    return json.dumps({"result": result})
+
+
+def perform_nuclei_scan(ip):
+    try:
+        result = subprocess.check_output(
+            ['./nuclei', '-u', ip], universal_newlines=True)
+        return json.dumps({"result": result})
+    except subprocess.CalledProcessError as e:
+        app.logger.error("Nuclei scan failed: %s", e)
+        app.logger.error("Output: %s", e.output)
+        return json.dumps({"error": "Nuclei scan failed"})
+
+
+def parse_nmap_result(result):
+    tree = ET.fromstring(result)
+    scan_summary = {
+        "IP": ip,
+        "OpenPorts": [port.attrib['portid'] for port in tree.findall(".//port[@state='open']")],
+    }
+    return json.dumps(scan_summary)
+
+
 @app.route('/api/light-scan', methods=['POST'])
-def nuclei_scan():
+def light_scan():
     ip = request.json.get('ip', '').strip()
-    if not ip.count('.') == 3 or not all(0 <= int(part) <= 255 for part in ip.split('.')):
-        return jsonify({"error": "Invalid IP address"}), 400
-    tool = "nuclei"
-    if not os.path.exists(tool):
-        os.system("wget https://github.com/projectdiscovery/nuclei/releases/download/v2.9.15/nuclei_2.9.15_linux_amd64.zip")
-        os.system("unzip nuclei_2.9.15_linux_amd64.zip")
-        os.system("chmod +x nuclei")
-    result = subprocess.check_output(['./nuclei',"-nc" , '-u', ip], universal_newlines=True)
-    return jsonify({"result": result})
+    selected_scans = request.json.get('selectedScans', {})
 
-@app.route('/api/nmap-scan', methods=['POST'])
-def nmap_scan():
-    ip = request.json.get('ip', '').strip()
     if not ip.count('.') == 3 or not all(0 <= int(part) <= 255 for part in ip.split('.')):
+        app.logger.warning("Invalid IP address: %s", ip)
         return jsonify({"error": "Invalid IP address"}), 400
-    result = subprocess.check_output(['nmap',"-Pn","-sV" , "-sC", ip], universal_newlines=True)
-    return jsonify({"result": result})
 
-@app.route('/api/tls-scan', methods=['POST'])
-def tls_scan():
-    ip = request.json.get('ip', '').strip()
-    if not ip.count('.') == 3 or not all(0 <= int(part) <= 255 for part in ip.split('.')):
-        return jsonify({"error": "Invalid IP address"}), 400
-    tool = "testssl.sh"
-    if not os.path.exists(tool):
-        os.system("wget https://github.com/drwetter/testssl.sh/blob/3.2/testssl.sh")
-        os.system("chmod +x testssl.sh")
-    result = subprocess.check_output(['./testssl.sh','-u', ip], universal_newlines=True)
-    return jsonify({"result": result})
+    response_data = {}
 
-# Main's Socket.IO event
-@socketio.on('start_scan')
-def handle_start_scan(message):
-    ip_address = message['ip']
-    # Simulate a scan with progress updates
-    for progress in range(0, 101, 10):
-        scan_result = f"Scanning IP: {ip_address}, Progress: {progress}%"
-        socketio.emit('scan_update', {'update': scan_result, 'progress': progress})
-        time.sleep(1)  # Simulate time taken for scanning
+    if selected_scans.get('nmap'):
+        response_data['nmap'] = perform_nmap_scan(ip)
+
+    if selected_scans.get('nuclei'):
+        response_data['nuclei'] = perform_nuclei_scan(ip)
+
+    return jsonify(response_data)
+
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    app.run(debug=True)
+
