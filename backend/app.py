@@ -14,7 +14,7 @@ CORS(app)
 socketio = SocketIO(app)
 
 # Fabian's routes
-@app.route('/api/nuclei-scan', methods=['POST'])
+@app.route('/api/light-scan', methods=['POST'])
 def nuclei_scan():
     ip = request.json.get('ip', '').strip()
     if not ip.count('.') == 3 or not all(0 <= int(part) <= 255 for part in ip.split('.')):

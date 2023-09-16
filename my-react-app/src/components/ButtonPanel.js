@@ -19,14 +19,23 @@ import io from 'socket.io-client';
 
 function ConsoleOutput({ output }) {
   return (
-    <div style={{ fontFamily: 'monospace', backgroundColor: '#111', padding: '10px', color: '#FFF', overflow: 'auto' }}>
+    <div style={{
+      fontFamily: 'monospace',
+      fontSize: '16px', // Increase font size
+      lineHeight: '1.5', // Adjust line spacing
+      backgroundColor: '#111',
+      padding: '10px',
+      color: '#FFF',
+      overflowY: 'auto', // Scroll vertically if content exceeds the height
+      maxHeight: '400px', // Set a maximum height
+      whiteSpace: 'pre-wrap' // Keep this to maintain line breaks and spaces
+    }}>
       <Ansi>
         {output}
       </Ansi>
     </div>
   );
-}
-
+};
 const ButtonPanel = () => {
   const [open, setOpen] = useState(false);
   const [ipAddress, setIpAddress] = useState("");
@@ -173,13 +182,18 @@ const ButtonPanel = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Display scan results if available */}
       {result && (
-        <div style={{ marginTop: "20px", whiteSpace: "pre-wrap" }}>
-          <h3>Scan Results:</h3>
-          <ConsoleOutput output={result} />  {/* Updated to use result instead of output */}
-        </div>
-      )}
+  <div style={{ marginTop: "20px" }}>
+    <h3>Scan Results:</h3>
+    <div style={{ 
+      border: '1px solid #333', // Optional border for visual clarity
+      maxHeight: '400px', // Ensuring it doesn't stretch beyond this height
+      overflowY: 'scroll' // Making sure content is scrollable if it exceeds the height
+    }}>
+      <ConsoleOutput output={result} />
+    </div>
+  </div>
+)}
     </Container>
   );
 };
