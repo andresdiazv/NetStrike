@@ -4,18 +4,34 @@ import { Button, Container, Box, Dialog, DialogActions, DialogContent, DialogCon
 const ButtonPanel = () => {
   const [open, setOpen] = useState(false);
   const [ipAddress, setIpAddress] = useState('');
+  const [result, setResult] = useState(null); // You might need to add this if you want to store the scan result
+
+  const handleScan = () => {
+    // Perform the scan with the ipAddress
+    console.log('Scanning IP:', ipAddress);
+    fetch('/api/light-scan', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ ip: ipAddress })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+      } else {
+        setResult(data.result);
+      }
+    });
+    setOpen(false);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleScan = () => {
-    // Perform the scan with the ipAddress
-    console.log('Scanning IP:', ipAddress);
     setOpen(false);
   };
 
