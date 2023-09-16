@@ -9,9 +9,6 @@ const Navbar = () => {
         <Typography variant="h6" style={{ flexGrow: 1, fontFamily: 'Minecraft'}}>
           NetStrike
         </Typography>
-        <Button color="inherit" style={{ fontFamily: 'Minecraft' }} href="/">Home</Button>
-        <Button color="inherit" style={{ fontFamily: 'Minecraft' }} href="/about">About</Button>
-        <Button color="inherit" style={{ fontFamily: 'Minecraft' }} href="/contact">Contact</Button>
       </Toolbar>
     </AppBar>
   );

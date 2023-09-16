@@ -30,14 +30,14 @@ const ButtonPanel = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ip: ipAddress }),
+      body: JSON.stringify({ ip: ipAddress, selectedScans }),
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
           alert(data.error);
         } else {
-          setResult(data.result);
+          setResult(JSON.stringify(data, null, 2));
         }
       })
       .catch((err) => {
