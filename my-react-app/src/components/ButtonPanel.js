@@ -1,7 +1,24 @@
-import React from 'react';
-import { Button, Container, Box } from '@mui/material';
+import React, { useState } from 'react';
+import { Button, Container, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 
 const ButtonPanel = () => {
+  const [open, setOpen] = useState(false);
+  const [ipAddress, setIpAddress] = useState('');
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleScan = () => {
+    // Perform the scan with the ipAddress
+    console.log('Scanning IP:', ipAddress);
+    setOpen(false);
+  };
+
   return (
     <Container>
       <Box 
@@ -15,27 +32,42 @@ const ButtonPanel = () => {
           variant="contained" 
           color="primary" 
           size="large" 
-          style={{ margin: '10px', width: '200px', height: '100px', fontFamily: 'Minecraft' }}  // Adjusted size
+          style={{ margin: '10px', width: '500px', height: '100px', fontFamily: 'Minecraft' }}
+          onClick={handleClickOpen}  // Open the dialog when clicked
         >
           Start Scan
         </Button>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          size="large" 
-          style={{ margin: '10px', width: '200px', height: '100px', fontFamily: 'Minecraft' }}  // Adjusted size
-        >
-          View Status
-        </Button>
-        <Button 
-          variant="contained" 
-          color="primary" 
-          size="large" 
-          style={{ margin: '10px', width: '200px', height: '100px', fontFamily: 'Minecraft' }}  // Adjusted size
-        >
-          Scan History
-        </Button>
       </Box>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Enter IP Address</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter the IP address you want to scan.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="IP Address"
+            type="text"
+            fullWidth
+            value={ipAddress}
+            onChange={(e) => setIpAddress(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleScan} 
+            color="primary" 
+            style={{ fontFamily: 'Minecraft' }}  // Minecraft font
+          >
+            Start Scan
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
