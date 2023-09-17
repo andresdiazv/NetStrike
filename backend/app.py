@@ -34,31 +34,35 @@ def download_nuclei_if_needed():
             os.system("chmod +x nuclei")
 
 
-@app.route('/api/light-scan', methods=['POST'])
+@app.route('/api/nmap-scan', methods=['POST'])
 def light_scan():
     ip = request.json.get('ip', '').strip()
 
     if not is_valid_ipv4(ip):
         return jsonify({"error": "Invalid IP address"}), 400
-
+    os.system("mkdir nmap_scans")
+    os.chdir("nmap_scans")
     try:
         if platform.system() == 'Windows':
             result = subprocess.check_output([r'C:\Program Files (x86)\Nmap\nmap.exe', '-p', "80", "-Pn", ip], universal_newlines=True)
         else:
-            result = subprocess.check_output(['nmap', '-p', "80", "-Pn", ip], universal_newlines=True)
+            result = subprocess.check_output(['nmap', '-p', "80",'-oA','nmap-out', "-Pn",ip], universal_newlines=True)
         return jsonify({"result": result})
     except subprocess.CalledProcessError as e:
         return jsonify({"error": f"Error during nmap scan: {e.output}"}), 500
     except Exception as e:
         print(f"Unexpected error: {str(e)}")
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+    os.chdir("..")
 
 
 
 @app.route('/api/nuclei-scan', methods=['POST'])
 def nuclei_scan():
     ip = request.json.get('ip', '').strip()
-
+    # Creating directories for scans
+    os.system("mkdir nuclei-scans")
+    os.chdir("nuclei-scans")
     if not is_valid_ipv4(ip):
         return jsonify({"error": "Invalid IP address"}), 400
 
@@ -68,13 +72,17 @@ def nuclei_scan():
         if platform.system() == 'Windows':
             result = subprocess.check_output([r'C:\Users\Axddr\OneDrive\Desktop\New folder\nuclei.exe', '-u', ip], universal_newlines=True)
         else:
-            result = subprocess.check_output(['./nuclei', '-u', ip], universal_newlines=True)
+            result = subprocess.check_output(['./nuclei',"-nc" ,'-u', ip], universal_newlines=True)
         return jsonify({"result": result})
+        with open("nuclei_output", a) as file:
+                file.write(result)
+            
     except subprocess.CalledProcessError as e:
         return jsonify({"error": f"Error during nuclei scan: {e.output}"}), 500
     except Exception as e:
         print(f"Unexpected error: {str(e)}")
         return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
+    os.chdir("..")
 
 
 

@@ -1,0 +1,2 @@
+# Nmap 7.94 scan initiated Sun Sep 17 02:25:12 2023 as: nmap -p 80 -Pn -oA 192.178.50.78
+# Nmap done at Sun Sep 17 02:25:12 2023 -- 0 IP addresses (0 hosts up) scanned in 0.03 seconds

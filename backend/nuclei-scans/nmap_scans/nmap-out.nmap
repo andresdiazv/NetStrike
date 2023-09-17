@@ -1,0 +1,8 @@
+# Nmap 7.94 scan initiated Sun Sep 17 10:20:31 2023 as: nmap -p 80 -oA nmap-out -Pn 192.178.50.78
+Nmap scan report for tzmiaa-ad-in-f14.1e100.net (192.178.50.78)
+Host is up (0.0099s latency).
+
+PORT   STATE SERVICE
+80/tcp open  http
+
+# Nmap done at Sun Sep 17 10:20:31 2023 -- 1 IP address (1 host up) scanned in 0.13 seconds
