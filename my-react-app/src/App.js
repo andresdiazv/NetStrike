@@ -1,31 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import ButtonPanel from './components/ButtonPanel';
 import ScanCard from './components/ScanCard';
 import { Container, Typography } from '@mui/material';
 
 const App = () => {
+  const [scanResults, setScanResults] = useState(null);
+
   return (
     <div>
       <Navbar />
-      <Container >
-        <ButtonPanel />
-        <ScanCard title="Scan Status">
+      <Container>
+        <ButtonPanel setScanResults={setScanResults} />
+        <ScanCard title="Scan Reports">
           <Typography style={{ fontFamily: 'Minecraft' }}>
-            {/* Your Scan Status content here */}
-            Scan Status Information
+            {scanResults ? JSON.stringify(scanResults, null, 2) : "Scan Reports Information"}
           </Typography>
         </ScanCard>
         <ScanCard title="Scan History">
           <Typography style={{ fontFamily: 'Minecraft' }}>
-            {/* Your Scan History content here */}
             Scan History Information
-          </Typography>
-        </ScanCard>
-        <ScanCard title="Scan Reports">
-          <Typography style={{ fontFamily: 'Minecraft' }}>
-            {/* Your Scan Reports content here */}
-            Scan Reports Information
           </Typography>
         </ScanCard>
       </Container>

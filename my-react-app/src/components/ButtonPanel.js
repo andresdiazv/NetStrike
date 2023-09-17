@@ -13,7 +13,7 @@ import {
   Checkbox,
 } from "@mui/material";
 
-const ButtonPanel = () => {
+const ButtonPanel = ({ setScanResults}) => {
   const [open, setOpen] = useState(false);
   const [ipAddress, setIpAddress] = useState("");
   const [result, setResult] = useState(null);
@@ -80,10 +80,26 @@ const ButtonPanel = () => {
             width: "500px",
             height: "100px",
             fontFamily: "Minecraft",
+            backgroundColor: "rgb(251, 44, 55)",
           }}
           onClick={handleClickOpen}
         >
-          Start Scan
+          Start NMAP Scan
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          style={{
+            margin: "10px",
+            width: "500px",
+            height: "100px",
+            fontFamily: "Minecraft",
+            backgroundColor: "rgb(251, 44, 55)",
+          }}
+          onClick={handleClickOpen}
+        >
+          Start Nuclei Scan
         </Button>
       </Box>
 
@@ -103,30 +119,6 @@ const ButtonPanel = () => {
             fullWidth
             value={ipAddress}
             onChange={(e) => setIpAddress(e.target.value)}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={selectedScans.nmap}
-                onChange={handleCheckboxChange}
-                name="nmap"
-                color="primary"
-              />
-            }
-            label="Nmap"
-            style={{ fontFamily: "Minecraft" }}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={selectedScans.nuclei}
-                onChange={handleCheckboxChange}
-                name="nuclei"
-                color="primary"
-              />
-            }
-            label="Nuclei"
-            style={{ fontFamily: "Minecraft" }}
           />
         </DialogContent>
         <DialogActions>
