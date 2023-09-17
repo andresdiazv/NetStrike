@@ -9,52 +9,66 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
-  FormControlLabel,
-  Checkbox,
 } from "@mui/material";
 
-const ButtonPanel = ({ setScanResults}) => {
+const ButtonPanel = ({ setScanResults }) => {
   const [open, setOpen] = useState(false);
   const [ipAddress, setIpAddress] = useState("");
   const [result, setResult] = useState(null);
-  const [selectedScans, setSelectedScans] = useState({
-    nmap: false,
-    nuclei: false,
-  });
+  const [selectedScanType, setSelectedScanType] = useState(null); // New state for tracking scan type
 
   const handleScan = () => {
-    console.log("Scanning IP:", ipAddress);
-    console.log("Selected Scans:", selectedScans);
-    fetch("/api/light-scan", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ip: ipAddress }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          alert(data.error);
-        } else {
-          setResult(data.result);
-        }
+    if (selectedScanType === "nmap") {
+      // NMAP scan logic here...
+      console.log("Scanning IP with NMAP:", ipAddress);
+      fetch("/api/nmap-scan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ip: ipAddress }),
       })
-      .catch((err) => {
-        console.error("Error during scan:", err);
-        alert("Error occurred during the scan. Please try again.");
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            alert(data.error);
+          } else {
+            setResult(data.result);
+          }
+        })
+        .catch((err) => {
+          console.error("Error during NMAP scan:", err);
+          alert("Error occurred during the NMAP scan. Please try again.");
+        });
+    } else if (selectedScanType === "nuclei") {
+      // Nuclei scan logic here...
+      console.log("Scanning IP with Nuclei:", ipAddress);
+      fetch("/api/nuclei-scan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ip: ipAddress }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            alert(data.error);
+          } else {
+            setResult(data.result);
+          }
+        })
+        .catch((err) => {
+          console.error("Error during Nuclei scan:", err);
+          alert("Error occurred during the Nuclei scan. Please try again.");
+        });
+    }
+
     setOpen(false);
   };
 
-  const handleCheckboxChange = (event) => {
-    setSelectedScans({
-      ...selectedScans,
-      [event.target.name]: event.target.checked,
-    });
-  };
-
-  const handleClickOpen = () => {
+  const handleClickOpen = (type) => {
+    setSelectedScanType(type); // Set the scan type when opening the dialog
     setOpen(true);
   };
 
@@ -82,7 +96,7 @@ const ButtonPanel = ({ setScanResults}) => {
             fontFamily: "Minecraft",
             backgroundColor: "rgb(251, 44, 55)",
           }}
-          onClick={handleClickOpen}
+          onClick={() => handleClickOpen("nmap")} // Setting the scan type when clicked
         >
           Start NMAP Scan
         </Button>
@@ -97,7 +111,7 @@ const ButtonPanel = ({ setScanResults}) => {
             fontFamily: "Minecraft",
             backgroundColor: "rgb(251, 44, 55)",
           }}
-          onClick={handleClickOpen}
+          onClick={() => handleClickOpen("nuclei")} // Setting the scan type when clicked
         >
           Start Nuclei Scan
         </Button>
@@ -139,11 +153,21 @@ const ButtonPanel = ({ setScanResults}) => {
         </DialogActions>
       </Dialog>
 
-      {/* Display scan results if available */}
       {result && (
-        <div style={{ marginTop: "20px", whiteSpace: "pre-wrap" }}>
-          <h3>Scan Results:</h3>
-          <p>{result}</p>
+        <div style={{
+          marginTop: "20px",
+          padding: "10px",
+          backgroundColor: "black",
+          color: "red",
+          border: "2px solid red",
+          borderRadius: "5px",
+          fontFamily: "Courier New, monospace",
+          whiteSpace: "pre-wrap",
+          overflow: "auto",
+          maxHeight: "200px" // Change this value if you want a different height for the console display
+        }}>
+          <h3 style={{ color: "red" }}>Scan Results:</h3>
+          <pre>{result}</pre>
         </div>
       )}
     </Container>
